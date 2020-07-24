@@ -92,8 +92,8 @@ Now, prefix all calls with
 .. code:: bash
 
     docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing                         \
-    pl-pdfgeneration pdfgeneration.py                         \
-    --imagefile ex-covid.jpeg /incoming /outgoing                        \
+        pl-pdfgeneration pdfgeneration.py                         \
+        --imagefile ex-covid.jpeg /incoming /outgoing                        \
 
 Thus, getting inline help is:
 
