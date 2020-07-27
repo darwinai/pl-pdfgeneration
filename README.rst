@@ -54,32 +54,14 @@ Agruments
     [--meta]
     If specified, print plugin meta data.
 
+    [--imagefile]
+    required field, the name of the patient chest X-Ray image
+
 
 Run
 ----
 
 This ``plugin`` can be run in two modes: natively as a python package or as a containerized docker image.
-
-Using PyPI
-~~~~~~~~~~
-
-To run from PyPI, simply do a 
-
-.. code:: bash
-
-    pip install pdfgeneration
-
-and run with
-
-.. code:: bash
-
-    pdfgeneration.py --man /tmp /tmp
-
-to get inline help. The app should also understand being called with only two positional arguments
-
-.. code:: bash
-
-    pdfgeneration.py /some/input/directory /destination/directory
 
 
 Using ``docker run``
@@ -92,24 +74,14 @@ Now, prefix all calls with
 .. code:: bash
 
     docker run --rm -v $(pwd)/out:/outgoing                             \
-            fnndsc/pl-pdfgeneration pdfgeneration.py                        \
-
-Thus, getting inline help is:
-
-.. code:: bash
-
-    mkdir in out && chmod 777 out
-    docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing      \
-            fnndsc/pl-pdfgeneration pdfgeneration.py                        \
-            --man                                                       \
-            /incoming /outgoing
+            local/pl-pdfgeneration pdfgeneration.py                        \
 
 Examples
 --------
 
 
+docker build -t local/pl-pdfgeneration .
 
-docker build -t pl-pdfgeneration .
+docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing local/pl-pdfgeneration pdfgeneration.py --imagefile ex-covid.jpeg /incoming /outgoing
 
-docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing pl-pdfgeneration pdfgeneration.py --imagefile ex-covid.jpeg /incoming /outgoing
-
+docker run --rm local/pl-pdfgeneration pdfgeneration.py --json

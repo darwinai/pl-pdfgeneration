@@ -150,9 +150,11 @@ class Pdfgeneration(ChrisApp):
         # fetch input data
         with open('{}/prediction-default.json'.format(options.inputdir)) as f:
           classification_data = json.load(f)
-        with open('{}/severity.json'.format(options.inputdir)) as f:
-          severityScores = json.load(f)
-
+        try: 
+            with open('{}/severity.json'.format(options.inputdir)) as f:
+                severityScores = json.load(f)
+        except:
+            severityScores = None
 
         # output pdf here
         print("Creating pdf file in {}...".format(options.outputdir))
@@ -170,7 +172,7 @@ class Pdfgeneration(ChrisApp):
             txt = txt.replace("${PNEUMONIA}", classification_data['Pneumonia'])
             txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
             # add the severity value if prediction is covid
-            if template_file == "pdf-covid-positive-template.html":
+            if template_file == "pdf-covid-positive-template.html" and severityScores is not None:
               txt = txt.replace("${GEO_SEVERITY}", severityScores["Geographic severity"])
               txt = txt.replace("${GEO_EXTENT_SCORE}", severityScores["Geographic extent score"])
               txt = txt.replace("${OPC_SEVERITY}", severityScores["Opacity severity"])
