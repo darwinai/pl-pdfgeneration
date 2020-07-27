@@ -159,7 +159,7 @@ class Pdfgeneration(ChrisApp):
         # output pdf here
         print("Creating pdf file in {}...".format(options.outputdir))
         template_file = "pdf-covid-positive-template.html" 
-        if classification_data['prediction'] != "COVID-19":
+        if classification_data['prediction'] != "COVID-19" or severityScores is None:
           template_file = "pdf-covid-negative-template.html"
         # put image file in pdftemple folder to use it in pdf
         shutil.copy(options.inputdir + '/' + options.imagefile, "pdftemplate/")
@@ -172,7 +172,7 @@ class Pdfgeneration(ChrisApp):
             txt = txt.replace("${PNEUMONIA}", classification_data['Pneumonia'])
             txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
             # add the severity value if prediction is covid
-            if template_file == "pdf-covid-positive-template.html" and severityScores is not None:
+            if template_file == "pdf-covid-positive-template.html":
               txt = txt.replace("${GEO_SEVERITY}", severityScores["Geographic severity"])
               txt = txt.replace("${GEO_EXTENT_SCORE}", severityScores["Geographic extent score"])
               txt = txt.replace("${OPC_SEVERITY}", severityScores["Opacity severity"])
