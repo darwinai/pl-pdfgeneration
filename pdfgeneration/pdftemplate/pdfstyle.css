@@ -1,3 +1,157 @@
 body {
-  padding: 20px;
+  padding: 40px 60px;
+  font-family: "RedHatText", Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 36px;
+}
+
+h2 {
+    font-size: 30px;
+}
+
+hr {
+    border-top: 1px solid #d2d2d2;
+}
+
+.layout--half {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 40px;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.generic h1 {
+  margin: 0;
+}
+
+ 
+.generic h3 span {
+  font-weight: 300;
+}
+
+hr {
+  margin-bottom: 30px;
+}
+
+.analysis--prediction h4 {
+  font-weight: 300;
+  display: inline-block;
+  font-size: 20px;
+  margin: 0 0 30px;
+}
+
+.label--danger {
+  display: inline-block;
+  background-color: #FAEAE7;
+  border-radius: 30px;
+  padding: 8px 10px;
+  margin-left: 10px;
+  color: #7D1006;
+  font-weight: 600;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+}
+
+.label--danger img {
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+    max-width: 20px;
+}
+
+.label--danger p {
+  margin: 0;
+  vertical-align: middle;
+  float: left;
+}
+
+.label--positive {
+  display: inline-block;
+  background-color: #F3FAF1;
+  border-radius: 30px;
+  padding: 8px 10px;
+  margin-left: 10px;
+  color: #0F270C;
+  font-weight: 600;
+  vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+}
+
+.label--positive img {
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+    max-width: 20px;
+}
+
+.label--positive p {
+  margin: 0;
+  vertical-align: middle;
+  float: left;
+}
+
+.probability {
+    border-top: 1px solid #d2d2d2;
+}
+
+.probability--details h2 {
+    margin-bottom: 30px;
+}
+
+.probability--details h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.probability--details h3 span {
+    font-weight: 300;
+}
+
+.severity {
+    background-color: #f0f0f0;
+    border: 1px solid #d2d2d2;
+    border-radius: 3px;
+    padding: 10px 30px;
+}
+
+.severity h3 {
+    font-size: 24px;
+}
+
+.severity ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 30px;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.severity ul li {
+    line-height: 38px;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.severity ul li span {
+    font-weight: 300;
+}
+
+.xray-result-image {
+    margin: 40px 0;
+}
+
+.footer-text {
+    justify-content: flex-end;
+}
+
+.footer-text p {
+    font-size: 14px;
 }
