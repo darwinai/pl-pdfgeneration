@@ -1,5 +1,5 @@
 body {
-  padding: 40px 60px;
+  padding: 10px 20px;
   font-family: "RedHatText", Arial, Helvetica, sans-serif;
 }
 
@@ -15,10 +15,10 @@ hr {
     border-top: 1px solid #d2d2d2;
 }
 
-.layout--half {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 40px;
+.layout--half div, .layout--half section {
+  width: 50%;
+  float: left;
+  box-sizing: border-box;
 }
 
 .align-right {
@@ -29,9 +29,9 @@ hr {
   margin: 0;
 }
 
- 
 .generic h3 span {
   font-weight: 300;
+  display: inline;
 }
 
 hr {
@@ -113,6 +113,7 @@ hr {
 
 .probability--details h3 span {
     font-weight: 300;
+    display: inline;
 }
 
 .severity {
@@ -120,17 +121,23 @@ hr {
     border: 1px solid #d2d2d2;
     border-radius: 3px;
     padding: 10px 30px;
+    margin-top: 30px;
+}
+
+.severity .generic, .probability .probability--details {
+  width: 100%;
 }
 
 .severity h3 {
     font-size: 24px;
+    margin-bottom: 0;
 }
 
 .severity ul {
     list-style: none;
     padding-left: 0;
-    margin-top: 30px;
-    margin-bottom: 0;
+    margin-top: 10px;
+    margin-bottom: 20px;
     padding-bottom: 0;
 }
 
@@ -142,10 +149,14 @@ hr {
 
 .severity ul li span {
     font-weight: 300;
+    display: inline;
 }
 
 .xray-result-image {
-    margin: 40px 0;
+    padding: 40px 0;
+    display: block;
+    clear: both;
+    float: none;
 }
 
 .footer-text {
