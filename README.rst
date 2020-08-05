@@ -57,6 +57,9 @@ Agruments
     [--imagefile]
     required field, the name of the patient chest X-Ray image
 
+    [--patientId]
+    patient's id
+
 
 Run
 ----
@@ -73,8 +76,10 @@ Now, prefix all calls with
 
 .. code:: bash
 
-    docker run --rm -v $(pwd)/out:/outgoing                             \
-            local/pl-pdfgeneration pdfgeneration.py                        \
+    docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing            \
+      local/pl-pdfgeneration pdfgeneration.py --imagefile ex-covid.jpeg             \
+      --patientId 1234567  /incoming /outgoing               \
+
 
 Examples
 --------
@@ -82,6 +87,6 @@ Examples
 
 docker build -t local/pl-pdfgeneration .
 
-docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing local/pl-pdfgeneration pdfgeneration.py --imagefile ex-covid.jpeg /incoming /outgoing
+docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing local/pl-pdfgeneration pdfgeneration.py --imagefile ex-covid.jpeg --patientId 1234567  /incoming /outgoing
 
 docker run --rm local/pl-pdfgeneration pdfgeneration.py --json

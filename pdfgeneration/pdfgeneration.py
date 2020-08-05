@@ -15,6 +15,7 @@ import sys
 import json
 import shutil
 import pdfkit
+import datetime
 from pyvirtualdisplay import Display
 sys.path.append(os.path.dirname(__file__))
 
@@ -140,6 +141,11 @@ class Pdfgeneration(ChrisApp):
             type         = str, 
             optional     = False,
             help         = 'Name of image file submitted to the analysis')
+        self.add_argument('--patientId', 
+            dest         = 'patientId', 
+            type         = str, 
+            optional     = False,
+            help         = 'Patient ID')
 
     def run(self, options):
         """
@@ -166,11 +172,16 @@ class Pdfgeneration(ChrisApp):
         with open("pdftemplate/{}".format(template_file)) as f:
             txt = f.read()
             # replace the values
+            txt = txt.replace("${PATIENT_TOKEN}", options.patientId)
             txt = txt.replace("${PREDICTION_CLASSIFICATION}", classification_data['prediction'])
             txt = txt.replace("${COVID-19}", classification_data['COVID-19'])
             txt = txt.replace("${NORMAL}", classification_data['Normal'])
             txt = txt.replace("${PNEUMONIA}", classification_data['Pneumonia'])
             txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
+
+            time = datetime.datetime.now()
+            txt = txt.replace("${month-date}", time.strftime("%c"))
+            txt = txt.replace("${year}", time.strftime("%Y"))
             # add the severity value if prediction is covid
             if template_file == "pdf-covid-positive-template.html":
               txt = txt.replace("${GEO_SEVERITY}", severityScores["Geographic severity"])
