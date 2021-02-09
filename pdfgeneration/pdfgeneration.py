@@ -2,7 +2,7 @@
 #
 # pdfgeneration ds ChRIS plugin app
 #
-# (c) 2016-2019 Fetal-Neonatal Neuroimaging & Developmental Science Center
+# (c) 2019-2021 Fetal-Neonatal Neuroimaging & Developmental Science Center
 #                   Boston Children's Hospital
 #
 #              http://childrenshospital.org/FNNDSC/
@@ -17,79 +17,17 @@ import shutil
 import pdfkit
 import datetime
 from pyvirtualdisplay import Display
-sys.path.append(os.path.dirname(__file__))
 
-# import the Chris app superclass
 from chrisapp.base import ChrisApp
 
 
 Gstr_title = """
-
-Generate a title from 
-http://patorjk.com/software/taag/#p=display&f=Doom&t=pdfgeneration
-
-"""
-
-Gstr_synopsis = """
-
-(Edit this in-line help for app specifics. At a minimum, the 
-flags below are supported -- in the case of DS apps, both
-positional arguments <inputDir> and <outputDir>; for FS apps
-only <outputDir> -- and similarly for <in> <out> directories
-where necessary.)
-
-    NAME
-
-       pdfgeneration.py 
-
-    SYNOPSIS
-
-        python pdfgeneration.py                                         \\
-            [-h] [--help]                                               \\
-            [--json]                                                    \\
-            [--man]                                                     \\
-            [--meta]                                                    \\
-            [--savejson <DIR>]                                          \\
-            [-v <level>] [--verbosity <level>]                          \\
-            [--version]                                                 \\
-            <inputDir>                                                  \\
-            <outputDir> 
-
-    BRIEF EXAMPLE
-
-        * Bare bones execution
-
-            mkdir in out && chmod 777 out
-            python pdfgeneration.py   \\
-                                in    out
-
-    DESCRIPTION
-
-        `pdfgeneration.py` ...
-
-    ARGS
-
-        [-h] [--help]
-        If specified, show help message and exit.
-        
-        [--json]
-        If specified, show json representation of app and exit.
-        
-        [--man]
-        If specified, print (this) man page and exit.
-
-        [--meta]
-        If specified, print plugin meta data and exit.
-        
-        [--savejson <DIR>] 
-        If specified, save json representation file to DIR and exit. 
-        
-        [-v <level>] [--verbosity <level>]
-        Verbosity level for app. Not used currently.
-        
-        [--version]
-        If specified, print version number and exit. 
-
+ _____ _____  _   _ ___________        _   _      _    __________________   _____                           _   _             
+/  __ \  _  || | | |_   _|  _  \      | \ | |    | |   | ___ \  _  \  ___| |  __ \                         | | (_)            
+| /  \/ | | || | | | | | | | | |______|  \| | ___| |_  | |_/ / | | | |_    | |  \/ ___ _ __   ___ _ __ __ _| |_ _  ___  _ __  
+| |   | | | || | | | | | | | | |______| . ` |/ _ \ __| |  __/| | | |  _|   | | __ / _ \ '_ \ / _ \ '__/ _` | __| |/ _ \| '_ \ 
+| \__/\ \_/ /\ \_/ /_| |_| |/ /       | |\  |  __/ |_  | |   | |/ /| |     | |_\ \  __/ | | |  __/ | | (_| | |_| | (_) | | | |
+ \____/\___/  \___/ \___/|___/        \_| \_/\___|\__| \_|   |___/ \_|      \____/\___|_| |_|\___|_|  \__,_|\__|_|\___/|_| |_|
 """
 
 
@@ -97,18 +35,11 @@ class Pdfgeneration(ChrisApp):
     """
     An app that takes in prediction results and generates PDF.
     """
-    AUTHORS                 = 'DarwinAI (jefferpeng@darwinai.ca)'
-    SELFPATH                = os.path.dirname(os.path.abspath(__file__))
-    SELFEXEC                = os.path.basename(__file__)
-    EXECSHELL               = 'python3'
+    PACKAGE                 = __package__
     TITLE                   = 'PDF generation plugin'
     CATEGORY                = ''
     TYPE                    = 'ds'
-    DESCRIPTION             = 'An app that takes in prediction results and generates PDF'
-    DOCUMENTATION           = 'http://wiki'
-    VERSION                 = '0.1'
     ICON                    = '' # url of an icon image
-    LICENSE                 = 'AGPL 3.0'
     MAX_NUMBER_OF_WORKERS   = 1  # Override with integer value
     MIN_NUMBER_OF_WORKERS   = 1  # Override with integer value
     MAX_CPU_LIMIT           = '' # Override with millicore value as string, e.g. '2000m'
@@ -166,7 +97,7 @@ class Pdfgeneration(ChrisApp):
         print("Creating pdf file in {}...".format(options.outputdir))
         template_file = "pdf-covid-positive-template.html" 
         if classification_data['prediction'] != "COVID-19" or severityScores is None:
-          template_file = "pdf-covid-negative-template.html"
+            template_file = "pdf-covid-negative-template.html"
         # put image file in pdftemple folder to use it in pdf
         shutil.copy(options.inputdir + '/' + options.imagefile, "pdftemplate/")
         with open("pdftemplate/{}".format(template_file)) as f:
@@ -192,25 +123,15 @@ class Pdfgeneration(ChrisApp):
               writeF.write(txt)
               
         try:
-          disp = Display().start()
-          pdfkit.from_file(['pdftemplate/specificPatient.html'], '{}/patient_analysis.pdf'.format(options.outputdir))
+            disp = Display().start()
+            pdfkit.from_file(['pdftemplate/specificPatient.html'], '{}/patient_analysis.pdf'.format(options.outputdir))
         finally:
-          disp.stop()
+            disp.stop()
 
         # cleanup
         os.remove("pdftemplate/specificPatient.html")
         os.remove("pdftemplate/{}".format(options.imagefile))
         
 
-
     def show_man_page(self):
-        """
-        Print the app's man page.
-        """
-        print(Gstr_synopsis)
-
-
-# ENTRYPOINT
-if __name__ == "__main__":
-    chris_app = Pdfgeneration()
-    chris_app.launch()
+        self.print_help()
