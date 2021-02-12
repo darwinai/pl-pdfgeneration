@@ -18,6 +18,10 @@ setup(
     tests_require    =   ['nose'],
     license          =   'MIT',
     zip_safe         =   False,
+    python_requires  =   '>=3.8',
+    package_data     = {
+        'pdfgeneration': ['template/*', 'template/assets/*']
+    },
     entry_points     = {
         'console_scripts': [
             'pdfgeneration = pdfgeneration.__main__:main'

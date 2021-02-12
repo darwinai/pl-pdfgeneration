@@ -11,13 +11,12 @@
 
 
 import os
-import sys
+from os import path
 import json
 import shutil
 import pdfkit
 import datetime
-from pyvirtualdisplay import Display
-
+from importlib.resources import files
 from chrisapp.base import ChrisApp
 
 
@@ -75,7 +74,8 @@ class Pdfgeneration(ChrisApp):
         self.add_argument('--patientId', 
             dest         = 'patientId', 
             type         = str, 
-            optional     = False,
+            optional     = True,
+            default      = 'not specified',
             help         = 'Patient ID')
 
     def run(self, options):
@@ -93,45 +93,36 @@ class Pdfgeneration(ChrisApp):
         except:
             severityScores = None
 
-        # output pdf here
-        print("Creating pdf file in {}...".format(options.outputdir))
         template_file = "pdf-covid-positive-template.html" 
         if classification_data['prediction'] != "COVID-19" or severityScores is None:
             template_file = "pdf-covid-negative-template.html"
-        # put image file in pdftemple folder to use it in pdf
-        shutil.copy(options.inputdir + '/' + options.imagefile, "pdftemplate/")
-        with open("pdftemplate/{}".format(template_file)) as f:
-            txt = f.read()
-            # replace the values
-            txt = txt.replace("${PATIENT_TOKEN}", options.patientId)
-            txt = txt.replace("${PREDICTION_CLASSIFICATION}", classification_data['prediction'])
-            txt = txt.replace("${COVID-19}", classification_data['COVID-19'])
-            txt = txt.replace("${NORMAL}", classification_data['Normal'])
-            txt = txt.replace("${PNEUMONIA}", classification_data['Pneumonia'])
-            txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
 
-            time = datetime.datetime.now()
-            txt = txt.replace("${month-date}", time.strftime("%c"))
-            txt = txt.replace("${year}", time.strftime("%Y"))
-            # add the severity value if prediction is covid
-            if template_file == "pdf-covid-positive-template.html":
-              txt = txt.replace("${GEO_SEVERITY}", severityScores["Geographic severity"])
-              txt = txt.replace("${GEO_EXTENT_SCORE}", severityScores["Geographic extent score"])
-              txt = txt.replace("${OPC_SEVERITY}", severityScores["Opacity severity"])
-              txt = txt.replace("${OPC_EXTENT_SCORE}", severityScores['Opacity extent score'])
-            with open("pdftemplate/specificPatient.html", 'w') as writeF:
-              writeF.write(txt)
-              
-        try:
-            disp = Display().start()
-            pdfkit.from_file(['pdftemplate/specificPatient.html'], '{}/patient_analysis.pdf'.format(options.outputdir))
-        finally:
-            disp.stop()
+        txt = files('pdfgeneration').joinpath('template').joinpath(template_file).read_text()
+        # replace the values
+        txt = txt.replace("${PATIENT_TOKEN}", options.patientId)
+        txt = txt.replace("${PREDICTION_CLASSIFICATION}", classification_data['prediction'])
+        txt = txt.replace("${COVID-19}", classification_data['COVID-19'])
+        txt = txt.replace("${NORMAL}", classification_data['Normal'])
+        txt = txt.replace("${PNEUMONIA}", classification_data['Pneumonia'])
+        txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
 
-        # cleanup
-        os.remove("pdftemplate/specificPatient.html")
-        os.remove("pdftemplate/{}".format(options.imagefile))
-        
+        time = datetime.datetime.now()
+        txt = txt.replace("${month-date}", time.strftime("%c"))
+        txt = txt.replace("${year}", time.strftime("%Y"))
+        # add the severity value if prediction is covid
+        if template_file == "pdf-covid-positive-template.html":
+            txt = txt.replace("${GEO_SEVERITY}", severityScores["Geographic severity"])
+            txt = txt.replace("${GEO_EXTENT_SCORE}", severityScores["Geographic extent score"])
+            txt = txt.replace("${OPC_SEVERITY}", severityScores["Opacity severity"])
+            txt = txt.replace("${OPC_EXTENT_SCORE}", severityScores['Opacity extent score'])
+
+        # pdfkit wkhtmltopdf is hard-coded to look in /tmp for assets
+        # when input is a string
+        for asset_file in files('pdfgeneration').joinpath('template/assets').iterdir():
+            os.symlink(asset_file, path.join('/tmp', asset_file.name))
+        os.symlink(path.join(options.inputdir, options.imagefile), path.join('/tmp', options.imagefile))
+
+        pdfkit.from_string(txt, path.join(options.outputdir, 'patient_analysis.pdf'))
 
     def show_man_page(self):
         self.print_help()

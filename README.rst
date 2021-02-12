@@ -1,14 +1,13 @@
 pl-pdfgeneration
 ================================
 
-.. image:: https://badge.fury.io/py/pdfgeneration.svg
-    :target: https://badge.fury.io/py/pdfgeneration
+.. image:: https://img.shields.io/github/license/FNNDSC/pl-pdfgeneration
+    :target: https://github.com/FNNDSC/pl-pdfgeneration/blob/master/LICENSE
+    :alt: License AGPL-3.0
 
-.. image:: https://travis-ci.org/FNNDSC/pdfgeneration.svg?branch=master
-    :target: https://travis-ci.org/FNNDSC/pdfgeneration
-
-.. image:: https://img.shields.io/badge/python-3.5%2B-blue.svg
-    :target: https://badge.fury.io/py/pl-pdfgeneration
+.. image:: https://img.shields.io/docker/v/fnndsc/pl-covidnet-pdfgeneration?sort=semver
+    :target: https://hub.docker.com/r/fnndsc/pl-covidnet-pdfgeneration
+    :alt: Version
 
 .. contents:: Table of Contents
 
@@ -16,77 +15,41 @@ pl-pdfgeneration
 Abstract
 --------
 
-An app that takes in prediction results and generates PDF
+Generate a simple PDF report for the results from
+`pl-covidnet <https://github.com/FNNDSC/pl-covidnet>`_.
 
-
-Synopsis
+Comments
 --------
 
-.. code::
-
-    python pdfgeneration.py                                           \
-        [-v <level>] [--verbosity <level>]                          \
-        [--version]                                                 \
-        [--man]                                                     \
-        [--meta]                                                    \
-        <inputDir>
-        <outputDir> 
-
-Description
------------
-
-``pdfgeneration.py`` is a ChRIS-based application that...
+* Not working on PowerPC.
+* Something like this should use jinja2 and LaTeX instead.
 
 Agruments
 ---------
 
 .. code::
 
-    [-v <level>] [--verbosity <level>]
-    Verbosity level for app. Not used currently.
-
-    [--version]
-    If specified, print version number. 
-    
-    [--man]
-    If specified, print (this) man page.
-
-    [--meta]
-    If specified, print plugin meta data.
-
     [--imagefile]
     required field, the name of the patient chest X-Ray image
 
     [--patientId]
-    patient's id
-
-
-Run
-----
-
-This ``plugin`` can be run in two modes: natively as a python package or as a containerized docker image.
-
-
-Using ``docker run``
-~~~~~~~~~~~~~~~~~~~~
-
-To run using ``docker``, be sure to assign an "input" directory to ``/incoming`` and an output directory to ``/outgoing``. *Make sure that the* ``$(pwd)/out`` *directory is world writable!*
-
-Now, prefix all calls with 
-
-.. code:: bash
-
-    docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing            \
-      local/pl-pdfgeneration pdfgeneration.py --imagefile ex-covid.jpeg             \
-      --patientId 1234567  /incoming /outgoing               \
+    name to appear in report
 
 
 Examples
 --------
 
+.. code::
 
-docker build -t local/pl-pdfgeneration .
+    mkdir covidnet-in covidnet-out pdfgeneration-out
+    cp chest-scan.jpg covidnet-in
 
-docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing local/pl-pdfgeneration pdfgeneration.py --imagefile ex-covid.jpeg --patientId 1234567  /incoming /outgoing
+    docker run --rm -u -u $(id -u):$(id -g) \
+        -v $PWD/covidnet-in:/incoming:ro -v $PWD/covidnet-out:/outgoing:rw \
+        fnndsc/pl-covidnet:0.2.0 covidnet \
+        --imagefile chest-scan.jpg /incoming /outgoing
 
-docker run --rm local/pl-pdfgeneration pdfgeneration.py --json
+    docker run --rm -u -u $(id -u):$(id -g) \
+        -v $PWD/covidnet-out:/incoming:ro -v $PWD/pdfgeneration-out:/outgoing:rw \
+        fnndsc/pl-covidnet-pdfgeneration:0.2.0 pdfgeneration \
+        --imagefile chest-scan.jpg --patientId 12345678 /incoming /outgoing
