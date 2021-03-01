@@ -154,22 +154,22 @@ class Pdfgeneration(ChrisApp):
         print(Gstr_title)
         print('Version: %s' % self.get_version())
         # fetch input data
-        with open('{}/prediction-default.json'.format(options.inputdir)) as f:
+        with open(f"{options.inputdir}/prediction-default.json") as f:
           classification_data = json.load(f)
         try: 
-            with open('{}/severity.json'.format(options.inputdir)) as f:
+            with open(f"{options.inputdir}/severity.json" as f:
                 severityScores = json.load(f)
         except:
             severityScores = None
 
         # output pdf here
-        print("Creating pdf file in {}...".format(options.outputdir))
+        print(f"Creating pdf file in {options.outputdir}...")
         template_file = "pdf-covid-positive-template.html" 
         if classification_data['prediction'] != "COVID-19" or severityScores is None:
           template_file = "pdf-covid-negative-template.html"
         # put image file in pdftemple folder to use it in pdf
         shutil.copy(options.inputdir + '/' + options.imagefile, "pdftemplate/")
-        with open("pdftemplate/{}".format(template_file)) as f:
+        with open(f"pdftemplate/{template_file}") as f:
             txt = f.read()
             # replace the values
             txt = txt.replace("${PATIENT_TOKEN}", options.patientId)
@@ -177,8 +177,9 @@ class Pdfgeneration(ChrisApp):
             
             prediction_analysis = ""
             for columnName in classification_data:
+              prediction=classification_data.get(columnName, 'N/A')
               if (columnName != 'prediction') and (columnName != 'Prediction') and (columnName != '**DISCLAIMER**'):
-                prediction_analysis += "<h3>{title}: <span>{prediction}</span></h3>".format(title=columnName, prediction=classification_data.get(columnName, 'N/A'))
+                prediction_analysis += f"<h3>{columnName}: <span>{prediction}</span></h3>"
 
             txt = txt.replace("${PRED_ANALYSIS}", prediction_analysis)
             txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
@@ -197,13 +198,13 @@ class Pdfgeneration(ChrisApp):
               
         try:
           disp = Display().start()
-          pdfkit.from_file(['pdftemplate/specificPatient.html'], '{}/patient_analysis.pdf'.format(options.outputdir))
+          pdfkit.from_file(['pdftemplate/specificPatient.html'], f"{options.outputdir}/patient_analysis.pdf")
         finally:
           disp.stop()
 
         # cleanup
         os.remove("pdftemplate/specificPatient.html")
-        os.remove("pdftemplate/{}".format(options.imagefile))
+        os.remove(f"pdftemplate/{options.imagefile}"
         
 
 
