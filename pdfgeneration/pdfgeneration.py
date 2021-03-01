@@ -175,12 +175,12 @@ class Pdfgeneration(ChrisApp):
             txt = txt.replace("${PATIENT_TOKEN}", options.patientId)
             txt = txt.replace("${PREDICTION_CLASSIFICATION}", classification_data['prediction'])
             
-            predictionAnalysis = ""
+            prediction_analysis = ""
             for columnName in classification_data:
               if (columnName != 'prediction') and (columnName != 'Prediction') and (columnName != '**DISCLAIMER**'):
-                predictionAnalysis += "<h3>{title}: <span>{prediction}</span></h3>".format(title = columnName, prediction = classification_data.get(columnName, None))
+                prediction_analysis += "<h3>{title}: <span>{prediction}</span></h3>".format(title=columnName, prediction=classification_data.get(columnName, 'N/A'))
 
-            txt = txt.replace("${PRED_ANALYSIS}", predictionAnalysis)
+            txt = txt.replace("${PRED_ANALYSIS}", prediction_analysis)
             txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
 
             time = datetime.datetime.now()
