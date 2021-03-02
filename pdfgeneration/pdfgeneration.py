@@ -157,7 +157,7 @@ class Pdfgeneration(ChrisApp):
         with open(f"{options.inputdir}/prediction-default.json") as f:
           classification_data = json.load(f)
         try: 
-            with open(f"{options.inputdir}/severity.json" as f:
+            with open(f"{options.inputdir}/severity.json") as f:
                 severityScores = json.load(f)
         except:
             severityScores = None
@@ -204,7 +204,7 @@ class Pdfgeneration(ChrisApp):
 
         # cleanup
         os.remove("pdftemplate/specificPatient.html")
-        os.remove(f"pdftemplate/{options.imagefile}"
+        os.remove(f"pdftemplate/{options.imagefile}")
         
 
 
