@@ -155,7 +155,7 @@ class Pdfgeneration(ChrisApp):
         print('Version: %s' % self.get_version())
         # fetch input data
         with open(f"{options.inputdir}/prediction-default.json") as f:
-          classification_data = json.load(f)
+            classification_data = json.load(f)
         try: 
             with open(f"{options.inputdir}/severity.json") as f:
                 severityScores = json.load(f)
@@ -166,7 +166,7 @@ class Pdfgeneration(ChrisApp):
         print(f"Creating pdf file in {options.outputdir}...")
         template_file = "pdf-covid-positive-template.html" 
         if classification_data['prediction'] != "COVID-19" or severityScores is None:
-          template_file = "pdf-covid-negative-template.html"
+            template_file = "pdf-covid-negative-template.html"
         # put image file in pdftemple folder to use it in pdf
         shutil.copy(options.inputdir + '/' + options.imagefile, "pdftemplate/")
         with open(f"pdftemplate/{template_file}") as f:
@@ -177,9 +177,9 @@ class Pdfgeneration(ChrisApp):
             
             prediction_analysis = ""
             for columnName in classification_data:
-              prediction=classification_data.get(columnName, 'N/A')
-              if (columnName != 'prediction') and (columnName != 'Prediction') and (columnName != '**DISCLAIMER**'):
-                prediction_analysis += f"<h3>{columnName}: <span>{prediction}</span></h3>"
+                prediction=classification_data.get(columnName, 'N/A')
+                if (columnName != 'prediction') and (columnName != 'Prediction') and (columnName != '**DISCLAIMER**'):
+                    prediction_analysis += f"<h3>{columnName}: <span>{prediction}</span></h3>"
 
             txt = txt.replace("${PRED_ANALYSIS}", prediction_analysis)
             txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
@@ -189,18 +189,18 @@ class Pdfgeneration(ChrisApp):
             txt = txt.replace("${year}", time.strftime("%Y"))
             # add the severity value if prediction is covid
             if template_file == "pdf-covid-positive-template.html":
-              txt = txt.replace("${GEO_SEVERITY}", severityScores["Geographic severity"])
-              txt = txt.replace("${GEO_EXTENT_SCORE}", severityScores["Geographic extent score"])
-              txt = txt.replace("${OPC_SEVERITY}", severityScores["Opacity severity"])
-              txt = txt.replace("${OPC_EXTENT_SCORE}", severityScores['Opacity extent score'])
+                txt = txt.replace("${GEO_SEVERITY}", severityScores["Geographic severity"])
+                txt = txt.replace("${GEO_EXTENT_SCORE}", severityScores["Geographic extent score"])
+                txt = txt.replace("${OPC_SEVERITY}", severityScores["Opacity severity"])
+                txt = txt.replace("${OPC_EXTENT_SCORE}", severityScores['Opacity extent score'])
             with open("pdftemplate/specificPatient.html", 'w') as writeF:
-              writeF.write(txt)
+                writeF.write(txt)
               
         try:
-          disp = Display().start()
-          pdfkit.from_file(['pdftemplate/specificPatient.html'], f"{options.outputdir}/patient_analysis.pdf")
+            disp = Display().start()
+            pdfkit.from_file(['pdftemplate/specificPatient.html'], f"{options.outputdir}/patient_analysis.pdf")
         finally:
-          disp.stop()
+            disp.stop()
 
         # cleanup
         os.remove("pdftemplate/specificPatient.html")
