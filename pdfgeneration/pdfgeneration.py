@@ -154,29 +154,34 @@ class Pdfgeneration(ChrisApp):
         print(Gstr_title)
         print('Version: %s' % self.get_version())
         # fetch input data
-        with open('{}/prediction-default.json'.format(options.inputdir)) as f:
-          classification_data = json.load(f)
+        with open(f"{options.inputdir}/prediction-default.json") as f:
+            classification_data = json.load(f)
         try: 
-            with open('{}/severity.json'.format(options.inputdir)) as f:
+            with open(f"{options.inputdir}/severity.json") as f:
                 severityScores = json.load(f)
         except:
             severityScores = None
 
         # output pdf here
-        print("Creating pdf file in {}...".format(options.outputdir))
+        print(f"Creating pdf file in {options.outputdir}...")
         template_file = "pdf-covid-positive-template.html" 
         if classification_data['prediction'] != "COVID-19" or severityScores is None:
-          template_file = "pdf-covid-negative-template.html"
+            template_file = "pdf-covid-negative-template.html"
         # put image file in pdftemple folder to use it in pdf
         shutil.copy(options.inputdir + '/' + options.imagefile, "pdftemplate/")
-        with open("pdftemplate/{}".format(template_file)) as f:
+        with open(f"pdftemplate/{template_file}") as f:
             txt = f.read()
             # replace the values
             txt = txt.replace("${PATIENT_TOKEN}", options.patientId)
             txt = txt.replace("${PREDICTION_CLASSIFICATION}", classification_data['prediction'])
-            txt = txt.replace("${COVID-19}", classification_data['COVID-19'])
-            txt = txt.replace("${NORMAL}", classification_data['Normal'])
-            txt = txt.replace("${PNEUMONIA}", classification_data['Pneumonia'])
+            
+            prediction_analysis = ""
+            for column_name in classification_data:
+                prediction = classification_data.get(column_name, 'N/A')
+                if (column_name != 'prediction') and (column_name != 'Prediction') and (column_name != '**DISCLAIMER**'):
+                    prediction_analysis += f"<h3>{column_name}: <span>{prediction}</span></h3>"
+
+            txt = txt.replace("${PRED_ANALYSIS}", prediction_analysis)
             txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
 
             time = datetime.datetime.now()
@@ -184,22 +189,22 @@ class Pdfgeneration(ChrisApp):
             txt = txt.replace("${year}", time.strftime("%Y"))
             # add the severity value if prediction is covid
             if template_file == "pdf-covid-positive-template.html":
-              txt = txt.replace("${GEO_SEVERITY}", severityScores["Geographic severity"])
-              txt = txt.replace("${GEO_EXTENT_SCORE}", severityScores["Geographic extent score"])
-              txt = txt.replace("${OPC_SEVERITY}", severityScores["Opacity severity"])
-              txt = txt.replace("${OPC_EXTENT_SCORE}", severityScores['Opacity extent score'])
+                txt = txt.replace("${GEO_SEVERITY}", severityScores["Geographic severity"])
+                txt = txt.replace("${GEO_EXTENT_SCORE}", severityScores["Geographic extent score"])
+                txt = txt.replace("${OPC_SEVERITY}", severityScores["Opacity severity"])
+                txt = txt.replace("${OPC_EXTENT_SCORE}", severityScores['Opacity extent score'])
             with open("pdftemplate/specificPatient.html", 'w') as writeF:
-              writeF.write(txt)
+                writeF.write(txt)
               
         try:
-          disp = Display().start()
-          pdfkit.from_file(['pdftemplate/specificPatient.html'], '{}/patient_analysis.pdf'.format(options.outputdir))
+            disp = Display().start()
+            pdfkit.from_file(['pdftemplate/specificPatient.html'], f"{options.outputdir}/patient_analysis.pdf")
         finally:
-          disp.stop()
+            disp.stop()
 
         # cleanup
         os.remove("pdftemplate/specificPatient.html")
-        os.remove("pdftemplate/{}".format(options.imagefile))
+        os.remove(f"pdftemplate/{options.imagefile}")
         
 
 
