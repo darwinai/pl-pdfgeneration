@@ -27,7 +27,6 @@ MAINTAINER fnndsc "dev@babymri.org"
 
 ENV APPROOT="/usr/src/pdfgeneration"
 ENV DEBIAN_FRONTEND=noninteractive
-COPY ["pdfgeneration", "${APPROOT}"]
 COPY ["requirements.txt", "${APPROOT}"]
 
 WORKDIR $APPROOT
@@ -36,6 +35,8 @@ RUN apt-get update \
   && apt-get install -y libsm6 libxext6 libxrender-dev wkhtmltopdf xvfb \
   && pip install --upgrade pip \
   && pip install -r requirements.txt
+
+COPY ["pdfgeneration", "${APPROOT}"]
 
 CMD ["pdfgeneration.py", "--help"]
 
