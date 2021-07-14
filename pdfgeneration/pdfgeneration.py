@@ -179,7 +179,7 @@ class Pdfgeneration(ChrisApp):
             for column_name in classification_data:
                 prediction = classification_data.get(column_name, 'N/A')
                 if (column_name != 'prediction') and (column_name != 'Prediction') and (column_name != '**DISCLAIMER**'):
-                    prediction_analysis += f"<h3>{column_name}: <span>{prediction}</span></h3>"
+                    prediction_analysis += f"<h3>{column_name}: <span>{float(prediction)*100:.2f}%</span></h3>"
 
             txt = txt.replace("${PRED_ANALYSIS}", prediction_analysis)
             txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
