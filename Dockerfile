@@ -25,11 +25,13 @@
 FROM fnndsc/ubuntu-python3:18.04
 MAINTAINER fnndsc "dev@babymri.org"
 
-RUN mkdir -p /usr/src/pdfgeneration
+RUN mkdir /usr/src/pdfgeneration
 
 ENV APPROOT="/usr/src/pdfgeneration"
 ENV DEBIAN_FRONTEND=noninteractive
 COPY ["requirements.txt", "${APPROOT}"]
+
+WORKDIR $APPROOT
 
 RUN apt-get update \
   && apt-get install -y libsm6 libxext6 libxrender-dev wkhtmltopdf xvfb \
@@ -37,8 +39,6 @@ RUN apt-get update \
   && pip install -r requirements.txt
 
 COPY ["pdfgeneration", "${APPROOT}"]
-
-WORKDIR $APPROOT
 
 CMD ["pdfgeneration.py", "--help"]
 
