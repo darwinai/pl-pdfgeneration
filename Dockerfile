@@ -25,9 +25,9 @@
 FROM fnndsc/ubuntu-python3:18.04
 MAINTAINER fnndsc "dev@babymri.org"
 
-RUN mkdir /usr/src/pdfgeneration
 
 ENV APPROOT="/usr/src/pdfgeneration"
+RUN mkdir $APPROOT
 ENV DEBIAN_FRONTEND=noninteractive
 COPY ["requirements.txt", "${APPROOT}"]
 
