@@ -2,6 +2,6 @@ chrisapp
 pudb
 numpy==1.18.4
 opencv-python
-tensorflow==1.13.2
+tensorflow==2.5.1
 pdfkit
 pyvirtualdisplay
