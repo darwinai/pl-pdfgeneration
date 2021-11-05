@@ -1,7 +1,2 @@
-chrisapp
-pudb
-numpy==1.18.4
-opencv-python
-tensorflow==1.13.2
-pdfkit
-pyvirtualdisplay
+chrisapp~=2.4.0
+pdfkit~=0.6.1
