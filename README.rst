@@ -61,32 +61,24 @@ Agruments
     patient's id
 
 
-Run
-----
-
-This ``plugin`` can be run in two modes: natively as a python package or as a containerized docker image.
-
-
-Using ``docker run``
-~~~~~~~~~~~~~~~~~~~~
-
-To run using ``docker``, be sure to assign an "input" directory to ``/incoming`` and an output directory to ``/outgoing``. *Make sure that the* ``$(pwd)/out`` *directory is world writable!*
-
-Now, prefix all calls with 
+Local Build
+-----------
 
 .. code:: bash
 
-    docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing            \
-      local/pl-pdfgeneration pdfgeneration.py --imagefile ex-covid.jpeg             \
-      --patientId 1234567  /incoming /outgoing               \
+    DOCKER_BUILDKIT=1 docker build -t local/pl-pdfgeneration .
 
+Run
+----
 
-Examples
---------
+.. code:: bash
 
+    docker run --rm -u $(id -u):$(id -g) \
+        -v $PWD/in:/incoming:ro -v $PWD/out:/outgoing:rw \
+        darwinai/pl-covidnet covidnet \
+        --imagefile ex-covid.jpg /incoming /outgoing
 
-docker build -t local/pl-pdfgeneration .
-
-docker run --rm -v $(pwd)/in:/incoming -v $(pwd)/out:/outgoing local/pl-pdfgeneration pdfgeneration.py --imagefile ex-covid.jpeg --patientId 1234567  /incoming /outgoing
-
-docker run --rm local/pl-pdfgeneration pdfgeneration.py --json
+    docker run --rm -u $(id -u):$(id -g) \
+        -v $PWD/out:/incoming:ro -v $PWD/out:/outgoing:rw \
+        darwinai/pl-covidnet-pdfgeneration pdfgeneration \
+        --imagefile ex-covid.jpg --patientId 12345678 /incoming /outgoing
