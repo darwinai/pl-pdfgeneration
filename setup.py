@@ -9,7 +9,7 @@ setup(
     name='pdfgeneration',
     # for best practices make this version the same as the VERSION class variable
     # defined in your ChrisApp-derived Python class
-    version='0.1',
+    version='1.1.0',
     description='An app that takes in prediction results and generates PDF',
     long_description=readme,
     author='DarwinAI',
@@ -21,6 +21,7 @@ setup(
     tests_require=['nose'],
     license='AGPL',
     python_requires='>=3.6',
+    package_data={'pdfgeneration': ['template/*', 'template/assets/*']},
     entry_points={
         'console_scripts': ['pdfgeneration = pdfgeneration.__main__:main']
     },

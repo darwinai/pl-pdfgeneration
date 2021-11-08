@@ -66,7 +66,7 @@ Local Build
 
 .. code:: bash
 
-    DOCKER_BUILDKIT=1 docker build -t local/pl-pdfgeneration .
+    DOCKER_BUILDKIT=1 docker build -t local/pl-covidnet-pdfgeneration .
 
 Run
 ----

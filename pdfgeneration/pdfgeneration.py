@@ -102,9 +102,14 @@ class Pdfgeneration(ChrisApp):
         txt = txt.replace("${PATIENT_TOKEN}", options.patientId)
         txt = txt.replace("${PREDICTION_CLASSIFICATION}",
                           classification_data['prediction'])
-        txt = txt.replace("${COVID-19}", classification_data['COVID-19'])
-        txt = txt.replace("${NORMAL}", classification_data['Normal'])
-        txt = txt.replace("${PNEUMONIA}", classification_data['Pneumonia'])
+        txt = txt.replace(
+            "${COVID-19}",
+            f"{float(classification_data['COVID-19'])*100:.2f}%")
+        txt = txt.replace("${NORMAL}",
+                          f"{float(classification_data['Normal'])*100:.2f}%")
+        txt = txt.replace(
+            "${PNEUMONIA}",
+            f"{float(classification_data['Pneumonia'])*100:.2f}%")
         txt = txt.replace("${X-RAY-IMAGE}", options.imagefile)
 
         time = datetime.datetime.now()
